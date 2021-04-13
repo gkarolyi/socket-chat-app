@@ -121,8 +121,8 @@
         addMessage(message, "user-joined");
       });
 
-      socket.on("user left", (socketId) => {
-        const message = "A user has left the channel :(";
+      socket.on("user left", (socket) => {
+        const message = `A user has left the channel :(`;
         addMessage(message, "user-left");
       });
     </script>
