@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(2000, () => {
-  console.log("listening on http://localhost:2000");
+const port = process.env.PORT || 8000;
+server.listen(port, () => {
+  console.log(`listening on http://localhost:${port}`);
 });
