@@ -116,7 +116,9 @@
       socket.on("chat message", (message) => {
         const classList = message.sender == socket.id ? "bg-blue-50" : null;
         const nick =
-          message.sender == socket.id ? `${message.nick} (you)` : message.nick;
+          message.sender == socket.id
+            ? `${message.nick || "anonymous"} (you)`
+            : message.nick || "anonymous";
         addMessage({
           heading: nick,
           text: message.text,
