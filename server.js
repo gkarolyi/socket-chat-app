@@ -2,11 +2,12 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
-const path = require("path");
 const io = require("socket.io")(server);
 
+app.use(express.static(__dirname + "/public"));
+
 app.get("/", (request, response) => {
-  response.sendFile(path.join(__dirname, "/index.html"));
+  response.sendFile(__dirname + "/public/index.html");
 });
 
 io.on("connection", (socket) => {
@@ -19,7 +20,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
 });
