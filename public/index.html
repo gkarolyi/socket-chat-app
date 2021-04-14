@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Simple but superfun chat</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Simple chat app to showcase node.js + express + socket.io by gkarolyi"
+    />
+  </head>
+  <body>
+    <div
+      class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col h-screen justify-between"
+    >
+      <ul id="messages" class="divide-y divide-gray-200 p-1"></ul>
+      <div>
+        <form id="form" action="" class="mb-3 flex p-1 shadow-sm">
+          <input
+            id="input"
+            autocomplete="off"
+            class="shadow-sm block w-full sm:text-sm border-gray-300 rounded-l-md p-3"
+            placeholder="type your message here"
+          />
+          <button
+            type="button"
+            class="hidden md:inline-flex items-center px-3 py-3 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700"
+          >
+            Send
+            <!-- Heroicon name: solid/mail -->
+            <svg
+              class="ml-2 -mr-0.5 h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+              />
+              <path
+                d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+              />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      /* socket.nick = prompt("Please enter a nickname:");
+      if (socket.nick == null || socket.nick == "") {
+        socket.nick = "anonymous";
+      } */
+
+      const createListItem = ({ heading, time, text, classList }) => {
+        return `
+         <li class="p-3 ${classList || ""}">
+          <div class="flex space-x-3">
+            <div class="flex-1 space-y-1">
+              <div class="flex items-center justify-between">
+                <h3 class="heading text-sm text-gray-900">${heading}</h3>
+                <p class="time text-sm text-gray-700">${time}</p>
+              </div>
+              <p class="message text-sm text-gray-700">
+                ${text}
+              </p>
+            </div>
+          </div>
+        </li>
+        `;
+      };
+
+      const timeNow = () => {
+        const today = new Date();
+        return `${today.getHours()}:${today.getMinutes()}`;
+      };
+
+      const addMessage = (message) => {
+        message.time = timeNow();
+        const item = createListItem(message);
+        messages.insertAdjacentHTML("beforeend", item);
+        window.scrollTo(0, document.body.scrollHeight);
+      };
+
+      //Welcome the user to the website
+      addMessage({
+        heading: "Welcome!",
+        text: "You can start typing below and press send or hit enter to chat!",
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (input.value) {
+          socket.emit("chat message", {
+            sender: socket.id,
+            nick: socket.nick,
+            text: input.value,
+          });
+          input.value = "";
+        }
+      });
+
+      // focus input on load and keep it focused
+      input.focus();
+      input.addEventListener("blur", (event) => {
+        input.focus();
+      });
+
+      socket.on("chat message", (message) => {
+        const classList = message.sender == socket.id ? "bg-blue-50" : null;
+        const nick =
+          message.sender == socket.id ? `${message.nick} (you)` : message.nick;
+        addMessage({
+          heading: nick,
+          text: message.text,
+          classList,
+        });
+      });
+
+      socket.on("user joined", (socketId) => {
+        addMessage({
+          heading: "Announcement",
+          text: `A new user has joined - say hi!`,
+          classList: "bg-green-50",
+        });
+      });
+
+      socket.on("user left", (socket) => {
+        addMessage({
+          heading: "Announcement",
+          text: `A user has left the channel :(`,
+          classList: "bg-red-50",
+        });
+      });
+    </script>
+  </body>
+</html>
