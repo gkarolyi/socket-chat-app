@@ -14,7 +14,8 @@
   },
   "scripts": {
     "dev": "nodemon -e js,json,html",
-    "start": "yarn build:css && node server.js",
-    "build:css": "NODE_ENV=production yarn run tailwindcss build src/css/tailwind.css -o public/css/style.css"
+    "start": "yarn build && node server.js",
+    "build:css": "yarn run tailwindcss build src/css/tailwind.css -o public/css/style.css",
+    "build": "NODE_ENV=production yarn build:css"
   }
 }
