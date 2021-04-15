@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
     io.emit("announcement", {
       heading: "Announcement",
       text: `${oldNick} shall now be known as... ${newNick}!`,
-      classList: "bg-yellow-100",
+      classList: "bg-yellow-50",
     });
   });
 });
