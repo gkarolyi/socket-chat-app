@@ -11,12 +11,35 @@ app.get("/", (request, response) => {
 });
 
 io.on("connection", (socket) => {
-  socket.broadcast.emit("user joined", socket.id);
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("user left", socket.id);
+  socket.broadcast.emit("announcement", {
+    heading: "Announcement",
+    text: "A new user has joined the chat!",
+    classList: "bg-green-50",
   });
+  socket.join(`${socket.id}`);
+  io.to(`${socket.id}`).emit("announcement", {
+    heading: "Welcome!",
+    text: `Hey there - you can start typing below and press send or hit enter to chat! If you'd like to set a nickname, use /nick`,
+  });
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("announcement", {
+      heading: "Announcement",
+      text: "A user has left the chat :(",
+      classList: "bg-red-50",
+    });
+  });
+
   socket.on("chat message", (message) => {
     io.emit("chat message", message);
+  });
+
+  socket.on("nick change", ({ oldNick, newNick }) => {
+    io.emit("announcement", {
+      heading: "Announcement",
+      text: `${oldNick} shall now be known as... ${newNick}!`,
+      classList: "bg-yellow-100",
+    });
   });
 });
 
