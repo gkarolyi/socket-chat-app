@@ -4,9 +4,9 @@ This is just a little app to get started on learning a bit of `node.js` with `ex
 
 ### Project goals:
 
-- ~~add proper support for nicknames~~
-- messages should be inserted locally for the sender and not sent back via `socket`
-- typing indicator
-- choice of rooms with indicators of participants
-- private messages
-- ~~Tailwind CSS~~
+- [x] add proper support for nicknames
+- [x] messages should be inserted locally for the sender and not sent back via `socket`
+- [ ] typing indicator
+- [ ] choice of rooms with indicators of participants
+- [x] private messages
+- [x] Tailwind CSS
