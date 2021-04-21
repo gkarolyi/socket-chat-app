@@ -10,7 +10,8 @@ var connectedUsers = {};
 var recentlyUsedNicks = [];
 const assignUserName = () => {
   const set = new Set(Object.keys(connectedUsers).concat(recentlyUsedNicks));
-  let i = 0;
+  if (!set.has("anonymous")) return "anonymous";
+  let i = 1;
   while (set.has(`anonymous${i}`)) {
     i++;
   }
